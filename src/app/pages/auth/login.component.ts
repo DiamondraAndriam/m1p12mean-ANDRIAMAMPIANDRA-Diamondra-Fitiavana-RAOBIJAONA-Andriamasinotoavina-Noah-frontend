@@ -9,11 +9,23 @@ import { RippleModule } from 'primeng/ripple';
 import { AuthService } from '../service/auth.service';
 import { AppFloatingConfigurator } from '../../layout/component/app.floatingconfigurator';
 import { CommonModule } from '@angular/common';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
     selector: 'app-login',
     standalone: true,
-    imports: [ButtonModule, CheckboxModule, InputTextModule, PasswordModule, FormsModule, RouterModule, RippleModule, AppFloatingConfigurator, CommonModule ],
+    imports: [
+        ButtonModule,
+        CheckboxModule,
+        InputTextModule,
+        PasswordModule,
+        FormsModule,
+        RouterModule,
+        RippleModule,
+        AppFloatingConfigurator,
+        CommonModule,
+        ProgressSpinnerModule // Ajoutez ProgressSpinnerModule ici
+    ],
     template: `
         <app-floating-configurator />
         <div class="bg-surface-50 dark:bg-surface-950 flex items-center justify-center min-h-screen min-w-[100vw] overflow-hidden">
@@ -21,27 +33,28 @@ import { CommonModule } from '@angular/common';
                 <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
                     <div class="w-full bg-surface-0 dark:bg-surface-900 py-20 px-8 sm:px-20" style="border-radius: 53px">
                         <div class="text-center mb-8">
-                            <div class="logo-container">
-                                <img src="assets/logo.png" alt="MekaNika Logo" class="logo" />
+                            <div class="mb-10 flex justify-center">
+                                <img src="https://i.ibb.co/Z638LJvc/logo-grand.png" alt="Logo de MekaNika" class="logo" />
                             </div>
-                            <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">Welcome to <span class="text-orange">MEKA</span>NIKA!</div>
-                            <span class="text-muted-color font-medium">Sign in to continue</span>
+                            <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">Bienvenue sur <span class="text-orange">MEKA</span>NIKA !</div>
+                            <span class="text-muted-color font-medium">Connectez-vous pour continuer</span>
                         </div>
 
                         <div>
                             <label for="email1" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Email</label>
-                            <input pInputText id="email1" type="text" placeholder="Email address" class="w-full md:w-[30rem] mb-8" [(ngModel)]="credentials.email" name="email" required />
+                            <input pInputText id="email1" type="text" placeholder="Adresse email" class="w-full md:w-[30rem] mb-8" [(ngModel)]="credentials.email" name="email" required />
 
-                            <label for="password1" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Password</label>
-                            <p-password id="password1" [(ngModel)]="credentials.password" type="password" name="password" required placeholder="Password" [toggleMask]="true" styleClass="mb-4" [fluid]="true" [feedback]="false"></p-password>
+                            <label for="password1" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Mot de passe</label>
+                            <p-password id="password1" [(ngModel)]="credentials.password" type="password" name="password" required placeholder="Mot de passe" [toggleMask]="true" styleClass="mb-4" [fluid]="true" [feedback]="false"></p-password>
 
-                            <p-button label="Sign In" styleClass="w-full" routerLink="/" (click)="onLogin()"></p-button>
+                            <!-- Bouton de connexion avec indicateur de chargement -->
+                            <p-button label="Se connecter" styleClass="w-full" routerLink="/" (click)="onLogin()"></p-button>
                             
                             <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
 
                             <div class="mt-4 text-center">
-                                <span class="text-muted-color">Don't have an account?</span>
-                                <a routerLink="/auth/register" class="text-primary font-medium ml-2">Sign up</a>
+                                <span class="text-muted-color">Vous n'avez pas de compte ?</span>
+                                <a routerLink="/auth/register" class="text-primary font-medium ml-2">S'inscrire</a>
                             </div>
                         </div>
                     </div>
@@ -62,13 +75,9 @@ import { CommonModule } from '@angular/common';
                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre discrète */
             }
 
-            .logo-container {
-                margin-bottom: 20px; /* Espacement entre le logo et le texte */
-            }
-
             .logo {
-                width: 120px; /* Ajuste la taille du logo selon tes préférences */
-                height: auto; /* Maintient les proportions de l'image */
+                width: 135px;
+                height: auto; 
             }
 
             .text-orange {
@@ -81,22 +90,27 @@ export class Login {
     credentials = {
         email: 'jean.dupont@example.com',
         password: '0000'
-      };
-      errorMessage: string = '';
-    
-      constructor(private authService: AuthService, private router: Router) { }
-    
-      onLogin(): void {
+    };
+    errorMessage: string = '';
+    isLoading: boolean = false; // État de chargement
+
+    constructor(private authService: AuthService, private router: Router) { }
+
+    onLogin(): void {
+        this.isLoading = true; // Activer le chargement
+        this.errorMessage = ''; // Réinitialiser le message d'erreur
+
         this.authService.login(this.credentials).subscribe({
-          next: (response) => {
-            // Stocker le token dans le localStorage
-            this.authService.setToken(response.token);
-            this.router.navigate(['/']);  // Rediriger après connexion
-          },
-          error: (err) => {
-            this.errorMessage = 'Erreur de connexion';
-            console.error(err);
-          }
+            next: (response) => {
+                this.isLoading = false; // Désactiver le chargement
+                this.authService.setToken(response.token);
+                this.router.navigate(['/']); // Rediriger après connexion
+            },
+            error: (err) => {
+                this.isLoading = false; // Désactiver le chargement en cas d'erreur
+                this.errorMessage = 'Erreur de connexion';
+                console.error(err);
+            }
         });
     }
 }
