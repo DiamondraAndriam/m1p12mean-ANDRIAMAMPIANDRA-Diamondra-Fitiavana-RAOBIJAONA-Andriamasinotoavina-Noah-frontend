@@ -1,15 +1,17 @@
 import { Component } from '@angular/core';
 import { MenuItem } from 'primeng/api';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { StyleClassModule } from 'primeng/styleclass';
 import { AppConfigurator } from './app.configurator';
 import { LayoutService } from '../service/layout.service';
+import { AuthService } from '../../pages/service/auth.service';
+import { MenuModule } from 'primeng/menu';
 
 @Component({
     selector: 'app-topbar',
     standalone: true,
-    imports: [RouterModule, CommonModule, StyleClassModule, AppConfigurator],
+    imports: [RouterModule, CommonModule, StyleClassModule, AppConfigurator, MenuModule],
     template: ` <div class="layout-topbar">
         <div class="layout-topbar-logo-container">
             <button class="layout-menu-button layout-topbar-action" (click)="layoutService.onMenuToggle()">
@@ -72,9 +74,10 @@ import { LayoutService } from '../service/layout.service';
                         <i class="pi pi-inbox"></i>
                         <span>Messages</span>
                     </button>
-                    <button type="button" class="layout-topbar-action">
+
+                    <p-menu #menu [popup]="true" [model]="overlayMenuItems"></p-menu>
+                    <button type="button" class="layout-topbar-action" (click)="menu.toggle($event)">
                         <i class="pi pi-user"></i>
-                        <span>Profile</span>
                     </button>
                 </div>
             </div>
@@ -84,9 +87,31 @@ import { LayoutService } from '../service/layout.service';
 export class AppTopbar {
     items!: MenuItem[];
 
-    constructor(public layoutService: LayoutService) {}
+    overlayMenuItems: MenuItem[] = [
+        {
+            label: 'Logout',
+            icon: 'pi pi-refresh',
+            command: () => this.onLogout() // Appelle la méthode onLogout() lors du clic
+        }
+    ];
 
-    toggleDarkMode() {
-        this.layoutService.layoutConfig.update((state) => ({ ...state, darkTheme: !state.darkTheme }));
+    constructor(
+        public layoutService: LayoutService,
+        private authService: AuthService,
+        private router: Router
+    ) {}
+
+    // Méthode pour basculer entre le mode sombre et le mode clair
+    toggleDarkMode(): void {
+        this.layoutService.layoutConfig.update((state) => ({
+            ...state,
+            darkTheme: !state.darkTheme
+        }));
+    }
+
+    // Méthode pour gérer la déconnexion
+    onLogout(): void {
+        this.authService.logout(); // Appelle le service d'authentification pour déconnecter l'utilisateur
+        this.router.navigate(['/auth/login']); // Redirige vers la page de connexion
     }
 }

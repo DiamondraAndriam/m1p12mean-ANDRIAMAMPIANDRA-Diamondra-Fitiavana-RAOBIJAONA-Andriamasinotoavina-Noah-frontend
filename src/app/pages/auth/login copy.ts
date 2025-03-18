@@ -62,7 +62,7 @@ import { AppFloatingConfigurator } from '../../layout/component/app.floatingconf
         </div>
     `
 })
-export class Login {
+export class LoginCopy {
     email: string = '';
 
     password: string = '';
