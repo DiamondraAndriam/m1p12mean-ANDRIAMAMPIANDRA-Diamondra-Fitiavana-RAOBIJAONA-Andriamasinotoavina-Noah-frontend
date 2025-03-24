@@ -41,4 +41,16 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('authToken');
   }
+
+  getUserRole(): string | null {
+    const token = this.getToken();
+    if (token) {
+      const tokenParts = token.split('.');
+      if (tokenParts.length === 3) {
+        const payload = JSON.parse(atob(tokenParts[1])); // Décodage Base64
+        return payload.role;
+      }
+    }
+    return null;
+  }  
 }
