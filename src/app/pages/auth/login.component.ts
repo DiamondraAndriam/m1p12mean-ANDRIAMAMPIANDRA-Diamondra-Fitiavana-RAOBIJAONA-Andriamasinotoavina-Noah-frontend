@@ -48,7 +48,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
                             <p-password id="password1" [(ngModel)]="credentials.password" type="password" name="password" required placeholder="Mot de passe" [toggleMask]="true" styleClass="mb-4" [fluid]="true" [feedback]="false"></p-password>
 
                             <!-- Bouton de connexion avec indicateur de chargement -->
-                            <p-button label="Se connecter" styleClass="w-full" routerLink="/" (click)="onLogin()"></p-button>
+                            <p-button label="Se connecter" styleClass="w-full" (click)="onLogin()"></p-button>
                             
                             <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
 
@@ -97,17 +97,19 @@ export class Login {
     constructor(private authService: AuthService, private router: Router) { }
 
     onLogin(): void {
-        this.isLoading = true; // Activer le chargement
-        this.errorMessage = ''; // Réinitialiser le message d'erreur
+        this.isLoading = true; 
+        this.errorMessage = ''; 
 
         this.authService.login(this.credentials).subscribe({
             next: (response) => {
-                this.isLoading = false; // Désactiver le chargement
+                this.isLoading = false; 
                 this.authService.setToken(response.token);
-                this.router.navigate(['/']); // Rediriger après connexion
+                this.router.navigateByUrl('/').then(() => {
+                    window.location.reload(); 
+                });
             },
             error: (err) => {
-                this.isLoading = false; // Désactiver le chargement en cas d'erreur
+                this.isLoading = false; 
                 this.errorMessage = 'Erreur de connexion';
                 console.error(err);
             }

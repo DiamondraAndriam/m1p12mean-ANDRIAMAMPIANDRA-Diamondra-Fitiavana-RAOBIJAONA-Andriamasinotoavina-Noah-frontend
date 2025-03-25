@@ -50,18 +50,9 @@ import { MenuModule } from 'primeng/menu';
 
             <div class="layout-topbar-menu hidden lg:block">
                 <div class="layout-topbar-menu-content">
-                    <button type="button" class="layout-topbar-action">
-                        <i class="pi pi-calendar"></i>
-                        <span>Calendar</span>
-                    </button>
-                    <button type="button" class="layout-topbar-action">
-                        <i class="pi pi-inbox"></i>
-                        <span>Messages</span>
-                    </button>
-
                     <p-menu #menu [popup]="true" [model]="overlayMenuItems"></p-menu>
                     <button type="button" class="layout-topbar-action" (click)="menu.toggle($event)">
-                        <i class="pi pi-user"></i>
+                        <i class="pi pi-user"> </i>
                     </button>
                 </div>
             </div>
@@ -70,14 +61,9 @@ import { MenuModule } from 'primeng/menu';
 })
 export class AppTopbar {
     items!: MenuItem[];
-
-    overlayMenuItems: MenuItem[] = [
-        {
-            label: 'Se déconnecter',
-            icon: 'pi pi-refresh',
-            command: () => this.onLogout() // Appelle la méthode onLogout() lors du clic
-        }
-    ];
+    userRole: string | null = null;
+    userName: string | null = null;
+    overlayMenuItems: MenuItem[] = [];
 
     constructor(
         public layoutService: LayoutService,
@@ -85,7 +71,29 @@ export class AppTopbar {
         private router: Router
     ) {}
 
-    // Méthode pour basculer entre le mode sombre et le mode clair
+    ngOnInit() {
+        this.userRole = this.authService.getUserRole();
+        this.userName = this.authService.getUserName();
+        
+        // Mettre à jour overlayMenuItems après avoir récupéré les valeurs
+        this.updateMenuItems();
+    }
+
+    updateMenuItems() {
+        this.overlayMenuItems = [
+            {
+                label: `${this.userName ?? 'Utilisateur'} - ${this.userRole ?? 'Role'}`,
+                icon: 'pi pi-user',
+                command: () => {}
+            },
+            {
+                label: 'Se déconnecter',
+                icon: 'pi pi-refresh',
+                command: () => this.onLogout()
+            }
+        ];
+    }
+
     toggleDarkMode(): void {
         this.layoutService.layoutConfig.update((state) => ({
             ...state,
@@ -93,9 +101,8 @@ export class AppTopbar {
         }));
     }
 
-    // Méthode pour gérer la déconnexion
     onLogout(): void {
-        this.authService.logout(); // Appelle le service d'authentification pour déconnecter l'utilisateur
-        this.router.navigate(['/auth/login']); // Redirige vers la page de connexion
+        this.authService.logout();
+        this.router.navigate(['/auth/login']);
     }
 }

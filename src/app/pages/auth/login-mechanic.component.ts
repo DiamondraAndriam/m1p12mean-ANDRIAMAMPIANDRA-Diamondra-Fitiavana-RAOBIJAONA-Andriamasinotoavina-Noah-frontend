@@ -36,7 +36,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
                             <div class="mb-10 flex justify-center">
                                 <img src="https://i.ibb.co/Z638LJvc/logo-grand.png" alt="Logo de MekaNika" class="logo" />
                             </div>
-                            <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">Bienvenue sur <span class="text-orange">MEKA</span>NIKA !</div>
+                            <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">Espace mécaniciens de <span class="text-orange">MEKA</span>NIKA !</div>
                             <span class="text-muted-color font-medium">Connectez-vous pour continuer</span>
                         </div>
 
@@ -48,14 +48,9 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
                             <p-password id="password1" [(ngModel)]="credentials.password" type="password" name="password" required placeholder="Mot de passe" [toggleMask]="true" styleClass="mb-4" [fluid]="true" [feedback]="false"></p-password>
 
                             <!-- Bouton de connexion avec indicateur de chargement -->
-                            <p-button label="Se connecter" styleClass="w-full" routerLink="/" (click)="onLogin()"></p-button>
+                            <p-button label="Se connecter" styleClass="w-full" (click)="onLogin()"></p-button>
                             
                             <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-
-                            <div class="mt-4 text-center">
-                                <span class="text-muted-color">Vous n'avez pas de compte ?</span>
-                                <a routerLink="/auth/register" class="text-primary font-medium ml-2">S'inscrire</a>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -97,17 +92,19 @@ export class LoginMechanic {
     constructor(private authService: AuthService, private router: Router) { }
 
     onLogin(): void {
-        this.isLoading = true; // Activer le chargement
-        this.errorMessage = ''; // Réinitialiser le message d'erreur
+        this.isLoading = true; 
+        this.errorMessage = ''; 
 
         this.authService.login(this.credentials).subscribe({
             next: (response) => {
-                this.isLoading = false; // Désactiver le chargement
+                this.isLoading = false; 
                 this.authService.setToken(response.token);
-                this.router.navigate(['/']); // Rediriger après connexion
+                this.router.navigateByUrl('/').then(() => {
+                    window.location.reload(); 
+                });
             },
             error: (err) => {
-                this.isLoading = false; // Désactiver le chargement en cas d'erreur
+                this.isLoading = false; 
                 this.errorMessage = 'Erreur de connexion';
                 console.error(err);
             }
