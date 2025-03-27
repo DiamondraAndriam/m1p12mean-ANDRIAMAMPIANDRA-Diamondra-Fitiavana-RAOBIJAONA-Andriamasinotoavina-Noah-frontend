@@ -1,0 +1,16 @@
+<div class="p-4">
+    <h3 class="text-lg font-bold mb-2">{{ reparation.voiture.marque }} {{ reparation.voiture.modele }}</h3>
+    <p><strong>Immatriculation:</strong> {{ reparation.voiture.immatriculation }}</p>
+    <p><strong>Année:</strong> {{ reparation.voiture.annee }}</p>
+    <p><strong>Statut:</strong> {{ reparation.statut }}</p>
+    <p><strong>Commentaire:</strong> {{ reparation.commentaire || 'Aucun' }}</p>
+    
+    <h4 class="mt-2 font-semibold">Pièces remplacées :</h4>
+    <ul>
+      <li *ngFor="let piece of reparation.piecesRemplacees">🔧 {{ piece.nom }} - {{ piece.prix | currency:'MGA' }}</li>
+    </ul>
+  
+    <p class="mt-2 font-bold">💰 Facture totale: {{ reparation.factureTotale | currency:'MGA' }}</p>
+  
+    <button pButton label="Fermer" class="p-button-text p-button-danger underline" (click)="ref.close()"></button>
+  </div>  

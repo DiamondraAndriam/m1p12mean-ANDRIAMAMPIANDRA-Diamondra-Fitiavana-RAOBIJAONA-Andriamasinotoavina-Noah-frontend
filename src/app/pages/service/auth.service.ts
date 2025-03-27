@@ -41,4 +41,53 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('authToken');
   }
+
+  isTokenExpired(): boolean {
+    const token = this.getToken();
+    if (!token) return true;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));  
+      const expirationDate = payload.exp * 1000;  
+      return expirationDate < Date.now();  
+    } catch (error) {
+      return true; 
+    }
+  }
+
+  getUserRole(): string | null {
+    const token = this.getToken();
+    if (token) {
+      const tokenParts = token.split('.');
+      if (tokenParts.length === 3) {
+        const payload = JSON.parse(atob(tokenParts[1])); 
+        return payload.role;
+      }
+    }
+    return null;
+  }  
+
+  getUserName(): string | null {
+    const token = this.getToken();
+    if (token) {
+      const tokenParts = token.split('.');
+      if (tokenParts.length === 3) {
+        const payload = JSON.parse(atob(tokenParts[1])); 
+        return payload.name;
+      }
+    }
+    return null;
+  }  
+
+  getUserId(): string | null {
+    const token = this.getToken();
+    if (token) {
+      const tokenParts = token.split('.');
+      if (tokenParts.length === 3) {
+        const payload = JSON.parse(atob(tokenParts[1]));
+        return payload.id;
+      }
+    }
+    return null;
+  }
 }

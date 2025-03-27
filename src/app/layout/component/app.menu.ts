@@ -21,6 +21,21 @@ export class AppMenu {
     ngOnInit() {
         this.model = [
             {
+                label: 'Manager',
+                role: 'manager',
+                items: [{ label: "Gestion d'utilisateur", icon: 'pi pi-fw pi-user', routerLink: ['/manager/user-management'] }]
+            },
+            {
+                label: 'Mécanicien',
+                role: 'mecanicien',
+                items: [{ label: "Liste des réparations", icon: 'pi pi-fw pi-user', routerLink: ['/mecanicien/list-reparation'] }]
+            },
+            {
+                label: 'Client',
+                role: 'client',
+                items: []
+            },
+            {
                 label: 'Home',
                 items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] }]
             },
