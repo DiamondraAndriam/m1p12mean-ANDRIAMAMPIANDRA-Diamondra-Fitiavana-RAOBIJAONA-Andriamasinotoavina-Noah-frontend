@@ -34,7 +34,7 @@ export class AppMenu implements OnInit {
             {
                 label: 'Mécanicien',
                 role: 'mecanicien',
-                items: []
+                items: [{ label: "Liste des réparations", icon: 'pi pi-fw pi-user', routerLink: ['/mecanicien/list-reparation'] }]
             },
             {
                 label: 'Client',

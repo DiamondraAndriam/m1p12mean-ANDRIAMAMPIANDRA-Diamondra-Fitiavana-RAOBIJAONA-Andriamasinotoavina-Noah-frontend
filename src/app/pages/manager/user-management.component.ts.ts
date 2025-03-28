@@ -46,6 +46,7 @@ interface expandedRows {
         RippleModule,
         IconFieldModule,
         DialogModule,
+        TableModule
     ],
     template: `<div class="card">
         <div class="font-semibold text-xl mb-4">Gestion des utilisateurs</div>
