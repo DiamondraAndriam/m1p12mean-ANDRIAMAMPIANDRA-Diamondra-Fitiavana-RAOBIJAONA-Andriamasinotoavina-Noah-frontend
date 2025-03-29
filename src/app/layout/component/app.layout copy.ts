@@ -21,7 +21,7 @@ import { LayoutService } from '../service/layout.service';
             <app-footer></app-footer>
         </div>
         <div class="layout-mask animate-fadein"></div>
-    </div>`
+    </div> `
 })
 export class AppLayout {
     overlayMenuOpenSubscription: Subscription;
