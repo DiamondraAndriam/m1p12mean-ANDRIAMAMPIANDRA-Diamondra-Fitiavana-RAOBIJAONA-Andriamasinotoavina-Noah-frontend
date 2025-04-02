@@ -39,7 +39,7 @@ export class AppMenu implements OnInit {
             {
                 label: 'Client',
                 role: 'client',
-                items: []
+                items: [{ label: "Confirmation email", icon: 'pi pi-fw pi-user', routerLink: ['/client/confirm-rdv'] }]
             },
             {
                 label: 'Home',

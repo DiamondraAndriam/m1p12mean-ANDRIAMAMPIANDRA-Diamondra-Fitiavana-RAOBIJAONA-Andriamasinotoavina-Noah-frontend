@@ -1,0 +1,20 @@
+<div class="p-4 border rounded shadow">
+    <h2 class="text-lg font-bold">Détails de la réparation</h2>
+  
+    <ul class="mt-2">
+      <li><strong>Client :</strong> {{ reparation.nomClient }}</li>
+      <li><strong>Date :</strong> {{ reparation.date }}</li>
+      <li><strong>Heure :</strong> {{ reparation.heure }}</li>
+      <li><strong>Service :</strong> {{ reparation.service }}</li>
+      <li><strong>Mécanicien :</strong> {{ reparation.mecanicien }}</li>
+    </ul>
+  
+    <button (click)="confirmerReparation()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+      Confirmer la réparation
+    </button>
+  
+    <p class="text-green-600 font-semibold mt-2" *ngIf="messageConfirmation">
+      {{ messageConfirmation }}
+    </p>
+  </div>
+  
