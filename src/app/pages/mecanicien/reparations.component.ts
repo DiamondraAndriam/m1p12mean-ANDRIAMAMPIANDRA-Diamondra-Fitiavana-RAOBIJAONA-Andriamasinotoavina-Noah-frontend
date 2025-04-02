@@ -44,7 +44,6 @@ export class ReparationsComponent implements OnInit {
   statusOptions = [
     { label: 'Tous', value: null },
     { label: 'À faire', value: 'à faire' },
-    { label: 'En cours', value: 'en cours' },
     { label: 'Terminé', value: 'terminé' },
   ];
   

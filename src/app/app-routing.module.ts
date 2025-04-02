@@ -4,6 +4,7 @@ import { RegisterComponent } from './features/auth/register/register.component';
 import { BestSellingWidget } from './pages/dashboard/components/bestsellingwidget';
 import { AuthGuard } from './guards/auth.guard';
 import { Login } from './pages/auth/login.component';
+import { HttpClientModule } from '@angular/common/http';
 
 const routes: Routes = [
   { path: 'login', component: Login },
@@ -13,7 +14,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes), HttpClientModule],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
