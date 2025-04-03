@@ -1,0 +1,31 @@
+<div class="container">
+    <h2>Résumé des Finances</h2>
+  
+    <!-- Sélecteur d'année -->
+    <div class="form-group">
+      <label for="year">Sélectionnez l'année</label>
+      <select id="year" class="form-control" [(ngModel)]="selectedYear" (change)="loadRevenusParMois()">
+        <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+      </select>
+    </div>
+  
+    <!-- Graphique des revenus par mois -->
+    <p-chart *ngIf="revenusChartData" type="bar" [data]="revenusChartData" [options]="revenusChartOptions"></p-chart>
+  
+    <!-- Tableau des revenus par service -->
+    <h3>Revenus par Service</h3>
+    <p-table [value]="revenusParService" [paginator]="true" [rows]="5">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Service</th>
+          <th>Total Revenu (MGA)</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-service>
+        <tr>
+          <td>{{ service._id }}</td>
+          <td>{{ service.totalRevenu | number }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>  

@@ -47,8 +47,15 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
                             <label for="password1" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Mot de passe</label>
                             <p-password id="password1" [(ngModel)]="credentials.password" type="password" name="password" required placeholder="Mot de passe" [toggleMask]="true" styleClass="mb-4" [fluid]="true" [feedback]="false"></p-password>
 
-                            <!-- Bouton de connexion avec indicateur de chargement -->
-                            <p-button label="Se connecter" styleClass="w-full" (click)="onLogin()"></p-button>
+                            <p-button 
+                                [label]="isLoading ? 'Connexion...' : 'Se connecter'" 
+                                [disabled]="isLoading"
+                                styleClass="w-full" 
+                                (click)="onLogin()">
+                                <ng-template pTemplate="icon">
+                                    <i *ngIf="isLoading" class="pi pi-spin pi-spinner"></i>
+                                </ng-template>
+                            </p-button>
                             
                             <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
 
