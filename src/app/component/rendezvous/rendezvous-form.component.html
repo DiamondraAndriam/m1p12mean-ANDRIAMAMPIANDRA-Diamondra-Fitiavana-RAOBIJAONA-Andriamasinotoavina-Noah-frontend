@@ -1,0 +1,31 @@
+<form [formGroup]="appointmentForm" (ngSubmit)="submitForm()">
+  <p-steps [model]="steps" [(activeIndex)]="activeIndex"></p-steps>
+
+  <div *ngIf="activeIndex === 0">
+    <h3>Étape 1: Sélection du Service et Mois</h3>
+    <p-dropdown [options]="services" formControlName="service" (onChange)="onServiceChange()"></p-dropdown>
+    <input type="month" formControlName="month">
+  </div>
+
+  <div *ngIf="activeIndex === 1">
+    <h3>Étape 2: Sélection de la Date</h3>
+    <p-calendar 
+      formControlName="appointmentDate" 
+      [showIcon]="true">
+    </p-calendar>
+
+    <h3>Sélectionner l'heure du rendez-vous</h3>
+    <p-dropdown [options]="availableTimes" formControlName="appointmentTime" placeholder="Choisissez l'heure"></p-dropdown>
+  </div>
+
+  <div *ngIf="activeIndex === 2">
+    <h3>Étape 3: Choix du Mécanicien</h3>
+    <p-dropdown [options]="mecanos" formControlName="mecano"></p-dropdown>
+  </div>
+
+  <div>
+    <button pButton label="Précédent" (click)="activeIndex = activeIndex - 1" [disabled]="activeIndex === 0" type="button"></button>
+    <button pButton label="Suivant" (click)="activeIndex = activeIndex + 1" [disabled]="activeIndex === steps.length - 1" type="button"></button>
+    <button pButton label="Soumettre" type="submit" [disabled]="!appointmentForm.valid"></button>
+  </div>
+</form>

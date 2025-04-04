@@ -45,7 +45,8 @@ export class AppMenu implements OnInit {
                 label: 'Client',
                 role: 'client',
                 items: [
-            
+                    { label: "Prendre rendez-vous", icon: 'pi pi-fw pi-calendar', routerLink: ['/rendezvous/new'] }, // icône pour réservation
+                    { label: "Mes rendez-vous", icon: 'pi pi-fw pi-list', routerLink: ['/rendezvous'] },
                 ]
             },
             {
