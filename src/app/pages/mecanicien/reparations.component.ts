@@ -76,9 +76,10 @@ export class ReparationsComponent implements OnInit {
   }  
 
   showDetails(reparation: any) {
+    console.log(JSON.stringify(reparation));
     this.dialogService.open(ReparationsDetailComponent, {
       data: { reparation },
-      header: 'Détails de la réparation',
+      header: reparation.rendezVousId.serviceId.nom,
       width: '50%'
     });
   }

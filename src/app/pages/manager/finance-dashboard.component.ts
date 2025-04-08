@@ -36,6 +36,11 @@ export class FinanceDashboardComponent implements OnInit {
 
   // Charger les revenus par mois pour une année donnée
   loadRevenusParMois(): void {
+    const documentStyle = getComputedStyle(document.documentElement);
+    const textColor = documentStyle.getPropertyValue('--text-color');
+    const borderColor = documentStyle.getPropertyValue('--surface-border');
+    const textMutedColor = documentStyle.getPropertyValue('--text-color-secondary');
+
     if (!this.selectedYear) return;  // Assurez-vous qu'une année soit sélectionnée
     this.financeService.getRevenusParMois(this.selectedYear).subscribe((data) => {
       const labels = data.map((item: any) => `${item.nom}`);
@@ -47,18 +52,45 @@ export class FinanceDashboardComponent implements OnInit {
           {
             label: 'Revenus en MGA',
             data: values,
-            backgroundColor: '#42A5F5',
-            borderColor: '#1E88E5',
+            backgroundColor: documentStyle.getPropertyValue('--p-primary-300'),
             fill: false,
           },
         ],
       };
   
       this.revenusChartOptions = {
-        responsive: true,
-        plugins: {
-          legend: { position: 'top' }
-        }
+          maintainAspectRatio: false,
+          aspectRatio: 0.8,
+          plugins: {
+              legend: {
+                  labels: {
+                      color: textColor
+                  }
+              }
+          },
+          scales: {
+              x: {
+                  stacked: true,
+                  ticks: {
+                      color: textMutedColor
+                  },
+                  grid: {
+                      color: 'transparent',
+                      borderColor: 'transparent'
+                  }
+              },
+              y: {
+                  stacked: true,
+                  ticks: {
+                      color: textMutedColor
+                  },
+                  grid: {
+                      color: borderColor,
+                      borderColor: 'transparent',
+                      drawTicks: false
+                  }
+              }
+          }
       };
     });
   }
