@@ -30,15 +30,16 @@ export class AppMenu implements OnInit {
                 label: 'Manager',
                 role: 'manager',
                 items: [
-                    { label: "Gestion d'utilisateur", icon: 'pi pi-fw pi-users', routerLink: ['/manager/user-management'] }, // icône pour gestion des utilisateurs
-                    { label: "Finance", icon: 'pi pi-fw pi-money-bill', routerLink: ['/manager/finance'] }, // icône pour finance
+                    { label: "Gestion d'utilisateur", icon: 'pi pi-fw pi-users', routerLink: ['/manager/user-management'] }, 
+                    { label: "Liste des réparations", icon: 'pi pi-fw pi-wrench', routerLink: ['/manager/list-reparation'] },
+                    { label: "Finance", icon: 'pi pi-fw pi-money-bill', routerLink: ['/manager/finance'] },
                 ]
             },
             {
                 label: 'Mécanicien',
                 role: 'mecanicien',
                 items: [
-                    { label: "Liste des réparations", icon: 'pi pi-fw pi-wrench', routerLink: ['/mecanicien/list-reparation'] }, // icône pour réparations
+                    { label: "Liste des réparations", icon: 'pi pi-fw pi-wrench', routerLink: ['/mecanicien/list-reparation'] },
                 ]
             },
             {

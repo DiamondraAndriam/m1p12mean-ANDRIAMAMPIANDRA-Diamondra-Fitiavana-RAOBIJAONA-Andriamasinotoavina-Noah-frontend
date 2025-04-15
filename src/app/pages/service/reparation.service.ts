@@ -34,6 +34,11 @@ export class ReparationService {
     return this.http.get<Reparation[]>(`${this.apiUrl}/mecanicien/${mecanicienId}`);
   }
 
+  // Récupérer les réparations d'un mécanicien
+  getAllReparations(): Observable<Reparation[]> {
+    return this.http.get<Reparation[]>(`${this.apiUrl}/`);
+  }
+
   // Mettre à jour une réparation (statut, pièces remplacées, facture)
   updateReparation(id: string, data: Partial<Reparation>): Observable<any> {
     return this.http.put(`${this.apiUrl}/${id}`, data);

@@ -75,6 +75,7 @@ interface expandedRows {
             
             <ng-template #header>
                 <tr>
+                    <th>Matricule</th>
                     <th>Nom</th>
                     <th>Prénom</th>
                     <th>Email</th>
@@ -87,7 +88,7 @@ interface expandedRows {
 
             <ng-template #body let-user>
                 <tr>
-                    <td>{{ user.lastName }}</td>
+                    <td>{{ user.matricule }}</td>
                     <td>{{ user.firstName }}</td>
                     <td>{{ user.email }}</td>
                     <td>{{ user.phone }}</td>
