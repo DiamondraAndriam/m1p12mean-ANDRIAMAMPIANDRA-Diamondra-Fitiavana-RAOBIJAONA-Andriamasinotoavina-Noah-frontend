@@ -31,7 +31,8 @@ export class AppMenu implements OnInit {
                 role: 'manager',
                 items: [
                     { label: "Gestion d'utilisateur", icon: 'pi pi-fw pi-users', routerLink: ['/manager/user-management'] }, 
-                    { label: "Liste des réparations", icon: 'pi pi-fw pi-wrench', routerLink: ['/manager/list-reparation'] },
+                    
+                    
                     { label: "Finance", icon: 'pi pi-fw pi-money-bill', routerLink: ['/manager/finance'] },
                 ]
             },
@@ -46,7 +47,7 @@ export class AppMenu implements OnInit {
                 label: 'Client',
                 role: 'client',
                 items: [
-            
+                    { label: "Liste des réparations", icon: 'pi pi-fw pi-wrench', routerLink: ['/client/list-reparation'] },
                 ]
             },
             {
