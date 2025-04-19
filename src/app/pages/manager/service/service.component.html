@@ -1,0 +1,55 @@
+<p-toolbar styleClass="mb-6">
+    <ng-template #start>
+        <p-button label="Nouveau" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openNew()" />
+    </ng-template>
+</p-toolbar>
+
+<p-dialog [(visible)]="serviceDialog" [style]="{ width: '500px' }" header="Détails du service" [modal]="true">
+    <ng-template #content>
+        <div class="flex flex-col gap-6">
+            <div>
+                <label for="nom" class="block font-bold mb-3">Nom</label>
+                <input type="text" pInputText id="nom" [(ngModel)]="service.nom" required autofocus fluid />
+                <small class="text-red-500" *ngIf="submitted && !service.nom">Le nom est requis.</small>
+            </div>
+            <div>
+                <label for="description" class="block font-bold mb-3">Description</label>
+                <textarea id="description" pTextarea [(ngModel)]="service.description" required rows="3" cols="20" fluid></textarea>
+            </div>
+            <div>
+                <label for="prix" class="block font-bold mb-3">Prix</label>
+                <p-inputnumber id="prix" [(ngModel)]="service.prix" mode="currency" currency="Ar" required fluid />
+                <small class="text-red-500" *ngIf="submitted && !service.prix">Le prix est requis.</small>
+            </div>
+            <div>
+                <label for="temps" class="block font-bold mb-3">Temps estimé pour la réalisation (minutes)</label>
+                <p-inputnumber id="temps" [(ngModel)]="service.temps_estime" required fluid />
+                <small class="text-red-500" *ngIf="submitted && !service.temps_estime">Le temps estimé est requis.</small>
+            </div>
+            <div>
+                <span class="block font-bold mb-4">Status</span>
+                <div class="grid grid-cols-12 gap-4">
+                    <div class="flex items-center gap-2 col-span-6">
+                        <p-radiobutton id="category1" name="category" value="actif" [(ngModel)]="service.status"/>
+                        <label for="category1">Actif</label>
+                    </div>
+                    <div class="flex items-center gap-2 col-span-6">
+                        <p-radiobutton id="category2" name="category" value="inactif" [(ngModel)]="service.status" />
+                        <label for="category2">Inactif</label>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <label for="typeMecanicien" class="block font-bold mb-3">Type de mécanicien</label>
+                <p-select [(ngModel)]="service.typeMecanicien" inputId="typeMecanicien" [options]="typesMecanicien" optionLabel="name" optionValue="code" placeholder="Choisissez le type de mécanicien pour ce service" fluid />
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideDialog()" />
+        <p-button label="Enregistrer" icon="pi pi-check" (click)="saveService()" />
+    </ng-template>
+</p-dialog>
+
+<p-confirmdialog [style]="{ width: '450px' }" />
