@@ -26,27 +26,30 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
                                 <img src="https://i.ibb.co/Z638LJvc/logo-grand.png" alt="Logo de MekaNika" class="logo" />
                             </div>
                             <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">Bienvenue sur <span class="text-orange">MEKA</span>NIKA !</div>
-                            <span class="text-muted-color font-medium">Connectez-vous pour continuer</span>
+                            <span class="text-muted-color font-medium">Inscrivez un mécanicien pour continuer</span>
                         </div>
 
                         <div>
-                            <label for="firstname" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Prénom</label>
-                            <input pInputText id="firstname" placeholder="Votre prénom" class="w-full md:w-[30rem] mb-8" [(ngModel)]="user.firstName" name="firstName" required />
+                            <label for="firstname" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Matricule</label>
+                            <input pInputText id="matricule" placeholder="matricule" class="w-full md:w-[30rem] mb-8" [(ngModel)]="user.matricule" name="matricule" required />
+
+                             <label for="firstname" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Prénom</label>
+                            <input pInputText id="firstname" placeholder="prénom" class="w-full md:w-[30rem] mb-8" [(ngModel)]="user.firstName" name="firstName" required />
 
                             <label for="lastName" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Nom</label>
-                            <input pInputText id="lastName" placeholder="Votre nom" class="w-full md:w-[30rem] mb-8" [(ngModel)]="user.lastName" name="lastName" required />
+                            <input pInputText id="lastName" placeholder="nom" class="w-full md:w-[30rem] mb-8" [(ngModel)]="user.lastName" name="lastName" required />
 
-                            <label for="email" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Téléphone</label>
-                            <input pInputText id="email" placeholder="Votre email" class="w-full md:w-[30rem] mb-8" [(ngModel)]="user.email" type="email" name="email" required />
+                            <label for="email" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Email</label>
+                            <input pInputText id="email" placeholder="email" class="w-full md:w-[30rem] mb-8" [(ngModel)]="user.email" type="email" name="email" required />
 
                             <label for="password" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Password</label>
                             <input pInputText id="password" placeholder="Mot de passe" class="w-full md:w-[30rem] mb-8" [(ngModel)]="user.password" type="password" name="password" required />
 
-                            <label for="phone" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Nom</label>
-                            <input pInputText id="phone" placeholder="Votre numéro mobile" class="w-full md:w-[30rem] mb-8" [(ngModel)]="user.phone" name="phone" required />
+                            <label for="phone" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Téléphone</label>
+                            <input pInputText id="phone" placeholder="numéro mobile" class="w-full md:w-[30rem] mb-8" [(ngModel)]="user.phone" name="phone" required />
 
                             <label for="address" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Adresse</label>
-                            <input pInputText id="address" placeholder="Votre addresse" class="w-full md:w-[30rem] mb-8" [(ngModel)]="user.address" name="address" />
+                            <input pInputText id="address" placeholder="addresse" class="w-full md:w-[30rem] mb-8" [(ngModel)]="user.address" name="address" />
 
                             <div>
                                 <p-button
@@ -56,17 +59,12 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
                                     (click)="onRegister()"
                                 >
                                     <ng-template pTemplate="content">
-                                        <span *ngIf="!isLoading">S' inscrire</span>
+                                        <span *ngIf="!isLoading">Inscrire</span>
                                         <span *ngIf="isLoading">
                                             <i class="pi pi-spinner pi-spin"></i> Inscription en cours...
                                         </span>
                                     </ng-template>
                                 </p-button>
-                            </div>
-                            
-                            <div class="mt-4 text-center">
-                                <span class="text-muted-color">Vous avez déjà un compte ?</span>
-                                <a routerLink="/auth/login" class="text-primary font-medium ml-2">Se connecter</a>
                             </div>
                         </div>
                     </div>
@@ -100,6 +98,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 })
 export class RegisterMechanicComponent {
     user = {
+      matricule: '',
       firstName: '',
       lastName: '',
       email: '',
@@ -119,7 +118,10 @@ export class RegisterMechanicComponent {
         next: (response) => {
           this.isLoading = false;
           console.log('Inscription réussie', response);
-          this.router.navigate(['/login']); // Rediriger vers la page de connexion
+          this.authService.setToken(response.token);
+          this.router.navigateByUrl('/').then(() => {
+              window.location.reload(); 
+          });
         },
         error: (err) => {
           this.isLoading = false;

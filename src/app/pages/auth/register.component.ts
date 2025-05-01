@@ -26,7 +26,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
                                 <img src="https://i.ibb.co/Z638LJvc/logo-grand.png" alt="Logo de MekaNika" class="logo" />
                             </div>
                             <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">Bienvenue sur <span class="text-orange">MEKA</span>NIKA !</div>
-                            <span class="text-muted-color font-medium">Connectez-vous pour continuer</span>
+                            <span class="text-muted-color font-medium">Inscrivez-vous pour continuer</span>
                         </div>
 
                         <div>
@@ -36,13 +36,13 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
                             <label for="lastName" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Nom</label>
                             <input pInputText id="lastName" placeholder="Votre nom" class="w-full md:w-[30rem] mb-8" [(ngModel)]="user.lastName" name="lastName" required />
 
-                            <label for="email" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Téléphone</label>
+                            <label for="email" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Email</label>
                             <input pInputText id="email" placeholder="Votre email" class="w-full md:w-[30rem] mb-8" [(ngModel)]="user.email" type="email" name="email" required />
 
                             <label for="password" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Password</label>
                             <input pInputText id="password" placeholder="Mot de passe" class="w-full md:w-[30rem] mb-8" [(ngModel)]="user.password" type="password" name="password" required />
 
-                            <label for="phone" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Nom</label>
+                            <label for="phone" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Téléphone</label>
                             <input pInputText id="phone" placeholder="Votre numéro mobile" class="w-full md:w-[30rem] mb-8" [(ngModel)]="user.phone" name="phone" required />
 
                             <label for="address" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Adresse</label>
@@ -50,7 +50,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
                             <div>
                                 <p-button
-                                    label="Se connecter"
+                                    label="S' inscrire"
                                     styleClass="w-full"
                                     [disabled]="isLoading"
                                     (click)="onRegister()"
@@ -119,7 +119,10 @@ export class RegisterComponent {
         next: (response) => {
           this.isLoading = false;
           console.log('Inscription réussie', response);
-          this.router.navigate(['/login']); // Rediriger vers la page de connexion
+          this.authService.setToken(response.token);
+          this.router.navigateByUrl('/').then(() => {
+              window.location.reload(); 
+          });
         },
         error: (err) => {
           this.isLoading = false;

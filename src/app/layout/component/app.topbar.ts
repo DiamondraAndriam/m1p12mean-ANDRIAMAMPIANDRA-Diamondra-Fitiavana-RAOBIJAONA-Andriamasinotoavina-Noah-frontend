@@ -103,6 +103,11 @@ export class AppTopbar {
 
     onLogout(): void {
         this.authService.logout();
-        this.router.navigate(['/auth/login']);
+        if(this.userRole === 'client')
+            this.router.navigate(['/auth/login']);
+        else if(this.userRole === 'mecanicien')
+            this.router.navigate(['/auth/login-mechanic']);
+        else
+            this.router.navigate(['/auth/login-manager']);
     }
 }

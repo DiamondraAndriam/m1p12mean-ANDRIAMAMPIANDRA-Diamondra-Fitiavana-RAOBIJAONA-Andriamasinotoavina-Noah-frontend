@@ -20,6 +20,7 @@ import { CustomerService } from '../service/customer.service';
 import { ProductService } from '../service/product.service';
 import { User, UserService } from '../service/user.service';
 import { DialogModule } from 'primeng/dialog';
+import { Password } from 'primeng/password';
 
 interface expandedRows {
     [key: string]: boolean;
@@ -89,6 +90,7 @@ interface expandedRows {
             <ng-template #body let-user>
                 <tr>
                     <td>{{ user.matricule }}</td>
+                    <td>{{ user.lastName }}</td>
                     <td>{{ user.firstName }}</td>
                     <td>{{ user.email }}</td>
                     <td>{{ user.phone }}</td>
@@ -99,6 +101,47 @@ interface expandedRows {
                     <td class="flex gap-5">
                         <button pButton icon="pi pi-ban" class="p-button-warning p-mr-2" (click)="toggleUserStatus(user)" [label]="user.active ? 'Désactiver' : 'Activer'"></button>
                         <button pButton icon="pi pi-trash" class="p-button-danger" (click)="openConfirmation(user)"></button>
+                        <button pButton icon="pi pi-pencil" class="p-button-info" (click)="editUser(user)"></button>
+
+                        
+                         <!-- ✅ Boîte de dialogue de modification -->
+                        <p-dialog header="Modifier l'utilisateur" [(visible)]="displayEditDialog" [style]="{ width: '500px' }" [modal]="true">
+                            <div>
+                                <div class="flex gap-2 items-center mb-3">
+                                    <label for="address">Matricule</label>
+                                    <input id="matricule" type="text" pInputText [(ngModel)]="editForm.matricule" />
+                                </div>
+                                <div class="flex gap-2 items-center mb-3">
+                                    <label for="lastName">Nom</label>
+                                    <input id="lastName" type="text" pInputText [(ngModel)]="editForm.lastName" />
+                                </div>
+                                <div class="flex gap-2 items-center mb-3">
+                                    <label for="firstName">Prénom</label>
+                                    <input id="firstName" type="text" pInputText [(ngModel)]="editForm.firstName" />
+                                </div>
+                                <div class="flex gap-2 items-center mb-3">
+                                    <label for="email">Email</label>
+                                    <input id="email" type="email" pInputText [(ngModel)]="editForm.email" />
+                                </div>
+                                <div class="flex gap-2 items-center mb-3">
+                                    <label for="phone">Téléphone</label>
+                                    <input id="phone" type="text" pInputText [(ngModel)]="editForm.phone" />
+                                </div>
+                                <div class="flex gap-2 items-center mb-3">
+                                    <label for="address">Adresse</label>
+                                    <input id="address" type="text" pInputText [(ngModel)]="editForm.address" />
+                                </div>
+                                <div class="flex gap-2 items-center mb-3">
+                                    <label for="password">Mot de passe</label>
+                                    <input id="password" type="password" pInputText [(ngModel)]="editForm.password" />
+                                </div>
+                            </div>
+                            <ng-template #footer>
+                                <p-button label="Annuler" icon="pi pi-times" (click)="closeEditDialog()" text severity="secondary" />
+                                <p-button label="Enregistrer" icon="pi pi-check" (click)="saveEditUser()" severity="success" />
+                            </ng-template>
+                        </p-dialog>
+
                         <p-dialog header="Confirmation" [(visible)]="displayConfirmation" [style]="{ width: '350px' }" [modal]="true">
                             <div class="flex items-center justify-center">
                                 <i class="pi pi-exclamation-triangle mr-4" style="font-size: 2rem"> </i>
@@ -143,10 +186,20 @@ export class UserManagement implements OnInit {
     loading: boolean = true;
     displayConfirmation: boolean = false;
     selectedUser: any;
-  
+    editForm: any = {
+        _id: '',
+        matricule: '',
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        address: '',
+        password: ''
+    };
+    displayEditDialog = false;
+
     constructor(
       private userService: UserService,
-      private confirmationService: ConfirmationService,
       private messageService: MessageService
     ) {}
   
@@ -189,5 +242,22 @@ export class UserManagement implements OnInit {
 
     closeConfirmation() {
         this.displayConfirmation = false;
+    }
+
+    editUser(user: any) {
+        this.editForm = { ...user };
+        this.displayEditDialog = true;
+    }
+
+    closeEditDialog() {
+        this.displayEditDialog = false;
+    }
+
+    saveEditUser() {
+        this.userService.updateUser(this.editForm._id, this.editForm).subscribe(() => {
+            this.messageService.add({ severity: 'success', summary: 'Modifié', detail: 'Utilisateur mis à jour' });
+            this.loadUsers();
+            this.closeEditDialog();
+        });
     }
 }
