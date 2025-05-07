@@ -1,31 +1,95 @@
 <form [formGroup]="appointmentForm" (ngSubmit)="submitForm()">
-  <p-steps [model]="steps" [(activeIndex)]="activeIndex"></p-steps>
-
-  <div *ngIf="activeIndex === 0">
-    <h3>Étape 1: Sélection du Service et Mois</h3>
-    <p-dropdown [options]="services" formControlName="service" (onChange)="onServiceChange()"></p-dropdown>
-    <input type="month" formControlName="month">
+<p-fluid>
+<div class="flex">
+  <div class="card flex flex-col gap-6 w-full">
+      <p-steps [model]="steps" [(activeIndex)]="activeIndex"></p-steps>
+    </div>
   </div>
+  <div class="flex mt-4">
+    <div class="card flex flex-col w-full">
+      <div class="card flex flex-col gap-4">
 
-  <div *ngIf="activeIndex === 1">
-    <h3>Étape 2: Sélection de la Date</h3>
-    <p-calendar 
-      formControlName="appointmentDate" 
-      [showIcon]="true">
-    </p-calendar>
+        <div *ngIf="activeIndex >= 0">
+        <div class="font-semibold text-xl">Étape 1: Choisissez le service et le mois</div>
+        <div class="flex flex-col md:flex-row">
+          <div class="md:w-1/2">
+            <div class="card flex flex-col gap-4">
+              <label for="services">Services</label>
+              <p-select id="services" [options]="services" optionLabel="name" placeholder="Choisir un service" (onChange)="onServiceChange()"></p-select>
+            </div>
+          </div>
+          <div class="md:w-1/2">
+            <div class="card flex flex-col gap-4">
+              <label for="month">Mois</label>
+              <p-datepicker
+                formControlName="month"
+                id="month" 
+                view="month" 
+                dateFormat="MM yy" 
+                [showIcon]="true"
+                [minDate]="minDate"
+                [yearNavigator]="true"
+                yearRange="2000:2030"
+                (onChange)="onMonthChange()"
+              >
+              </p-datepicker>
+            </div>
+          </div>
+        </div>
+        </div>
 
-    <h3>Sélectionner l'heure du rendez-vous</h3>
-    <p-dropdown [options]="availableTimes" formControlName="appointmentTime" placeholder="Choisissez l'heure"></p-dropdown>
+        <div *ngIf="activeIndex >= 1">
+        <div class="font-semibold text-xl">Étape 2: Choisissez la date et l'heure</div>
+        <div><small>Choisissez une date puis un créneau disponible et entrer l'heure du rendez-vous</small></div>
+        <div class="flex flex-col md:flex-row">
+          <div class="md:w-1/2">
+          <div class="card flex flex-col gap-4">
+            <label for="lastname2">Date disponibles</label>
+            <p-datepicker 
+              formControlName="appointmentDate" 
+              [minDate]="minDate"
+              [showIcon]="true" id="appointmentDate"
+              [disabledDates]="unavailableDates"
+              (onChange)="onDateSelect()">
+            </p-datepicker>
+            <label for="creneaux">Créneaux disponibles</label>
+            <p-select [options]="availableTimeSlots" formControlName="timeSlot" placeholder="heuresDisponibles?.length ? 'Choisir un créneau' : 'Choisissez d\'abord une date'"
+              [disabled]="!availableTimeSlots?.length" id="creneaux" (onChange)="onTimeSlotChange()">
+            </p-select>
+          </div>
+          </div>
+          <div class="md:w-1/2">
+          <div class="card flex flex-col gap-4">
+            <label for="lastname2">Heure disponibles</label>
+            <p-datepicker
+              formControlName="appointmentTime"
+              id="appointmentTime"
+              [showTime]="true"
+              [timeOnly]="true"
+              hourFormat="24"
+              [showIcon]="true"
+              (onChange)="onTimeSelect()">
+            </p-datepicker>
+          </div>
+          </div>
+        </div>
+        </div>
+         <div *ngIf="activeIndex >= 2">
+          <div class="font-semibold text-xl">Étape 3: Choix du Mécanicien</div>
+          <div class="md:w-1/2">
+            <div class="card flex flex-col gap-4">
+              <label for="mecano">Mécanicien</label>
+              <p-select [options]="mecanos" formControlName="mecano"></p-select>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col md:flex-row gap-10 justify-between">
+          <button pButton label="Précédent" (click)="activeIndex = activeIndex - 1" [disabled]="activeIndex === 0" type="button"></button>
+          <button pButton label="Suivant" (click)="activeIndex = activeIndex + 1" [disabled]="activeIndex === steps.length - 1" type="button"></button>
+          <button pButton label="Soumettre" type="submit" [disabled]="!appointmentForm.valid"></button>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <div *ngIf="activeIndex === 2">
-    <h3>Étape 3: Choix du Mécanicien</h3>
-    <p-dropdown [options]="mecanos" formControlName="mecano"></p-dropdown>
-  </div>
-
-  <div>
-    <button pButton label="Précédent" (click)="activeIndex = activeIndex - 1" [disabled]="activeIndex === 0" type="button"></button>
-    <button pButton label="Suivant" (click)="activeIndex = activeIndex + 1" [disabled]="activeIndex === steps.length - 1" type="button"></button>
-    <button pButton label="Soumettre" type="submit" [disabled]="!appointmentForm.valid"></button>
-  </div>
+</p-fluid>
 </form>

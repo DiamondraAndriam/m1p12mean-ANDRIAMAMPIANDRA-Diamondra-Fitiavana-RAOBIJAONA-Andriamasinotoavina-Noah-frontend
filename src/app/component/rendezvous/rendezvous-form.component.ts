@@ -7,10 +7,12 @@ import { RendezvousService } from '../../pages/service/rendezvous.service';
 import { ServiceService } from '../../pages/service/service.service';
 
 import { StepsModule } from 'primeng/steps';
-import { DropdownModule } from 'primeng/dropdown';
-import { CalendarModule } from 'primeng/calendar';
+import { DatePickerModule } from 'primeng/datepicker';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ButtonModule } from 'primeng/button';
+import { FluidModule } from 'primeng/fluid';
+import { SelectModule } from 'primeng/select';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-rendezvous',
@@ -20,29 +22,42 @@ import { ButtonModule } from 'primeng/button';
     CommonModule, 
     NgIf,
     StepsModule,
-    DropdownModule,
-    CalendarModule,
+    DatePickerModule,
     MultiSelectModule,
     ButtonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FluidModule,
+    SelectModule,
+    InputTextModule
   ],
 })
 
-export class RendezvousFormComponent implements OnInit {;
+export class RendezvousFormComponent implements OnInit {
+  dropdownItems = [
+    { name: 'Option 1', code: '1' },
+    { name: 'Option 2', code: '2' },
+    { name: 'Option 3', code: '3' }
+  ];
+  
+  minDate: Date = new Date();
+
+  dropdownItem = null;
+
   rendezvous: any;
   steps: any[] = [];
   activeIndex: number = 0;
   appointmentForm: FormGroup;
   
-  services: SelectItem[] = [];
+  services: any[] = [];
   unavailableDates: any[] = [];
+  availableTimes: any[] = [];
   workStartTime!: string;
   workEndTime!: string;
   
   mecanos: SelectItem[] = [];
+  
   selectedService: any;
   selectedMecano: any;
-  availableTimes: string[] = [];
 
   constructor(private fb: FormBuilder, private serviceService: ServiceService, private rendezvousService: RendezvousService) {
     this.appointmentForm = this.fb.group({
@@ -57,57 +72,62 @@ export class RendezvousFormComponent implements OnInit {;
   ngOnInit() {
     this.steps = [
       { label: 'Service et mois' },
-      { label: 'Date et heure de Rendez-vous' },
-      { label: 'Choix du Mécanicien' }
+      { label: 'Date et heure' },
+      { label: 'Mécanicien' }
     ];
     this.loadServices();
   }
 
   loadServices() {
-    // this.serviceService.getServices().subscribe(
-    //   (data) => {
-    //     this.services = data.map(service => ({
-    //       label: service.name,
-    //       value: service.id,
-    //     }));
-    //   },
-    //   (error) => {
-    //     console.error('Erreur lors de la récupération des services', error);
-    //   }
-    // );
-    setTimeout(() => {
-      this.services = [
-        { label: 'Consultation Générale', value: 1 },
-        { label: 'Chirurgie', value: 2 }
-      ];
-    }, 1000);
+    this.serviceService.getServices().subscribe({
+      next: (data) => {
+        this.services = data.map(service => ({
+          name: service.nom,
+          code: service.id,
+        }));
+      },
+      error: (error) => {
+        console.error('Erreur lors de la récupération des services', error);
+      }
+    });
   }
 
   onServiceChange() {
     this.loadService(this.appointmentForm.value.service);
     this.loadUnavailableDates();
+  }
+
+  onMonthChange() {
+    this.loadUnavailableDates();
+  }
+
+  onDateSelect() {
+    this.loadAvailableTimes();
+  }
+
+  onTimeSelect() {
+    const selectedTime = this.appointmentForm.value.appointmentTime;
+    const selectedDate = this.appointmentForm.value.appointmentDate;
+    const startTime = new Date(`${selectedDate}T${selectedTime}`);
+    const endTime = new Date(startTime.getTime() + this.selectedService.duration * 60000); // Ajouter la durée
+    this.availableTimes = this.generateAvailableTimes(startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), this.selectedService.duration);
     this.loadMecanos();
   }
 
   loadService(serviceId: string) {
     const month = this.appointmentForm.value.month;
     this.loadUnavailableDates();
-    // this.serviceService.getServiceById(serviceId).subscribe((data) => {
-    //   this.selectedService = data;
-    // });
-    // this.serviceService.getWorksHours().subscribe((data) => {
-    //   this.workStartTime = data[0].startTime;
-    //   this.workEndTime = data[0].endTime;
-    // });
-    this.selectedService ={
-      id: serviceId,
-      name: 'Consultation Générale',
-      duration: 30 // Durée en minutes
-    }
+    this.serviceService.getServiceById(serviceId).subscribe((data) => {
+      this.selectedService = data;
+    });
+    this.serviceService.getWorksHours().subscribe((data) => {
+      this.workStartTime = data[0].startTime;
+      this.workEndTime = data[0].endTime;
+    });
   }
 
   loadUnavailableDates() {
-    /*this.serviceService.getServiceUnavailability(this.appointmentForm.value.service, this.appointmentForm.value.month, new Date().getFullYear()).subscribe(
+    this.serviceService.getUnavailableDates(this.appointmentForm.value.service, this.appointmentForm.value.month, new Date().getFullYear()).subscribe(
     (data) => {
         // Formater les dates et heures d'indisponibilité
         this.unavailableDates = data.map(item => {
@@ -125,42 +145,56 @@ export class RendezvousFormComponent implements OnInit {;
       (error) => {
         console.error('Erreur lors de la récupération des dates indisponibles', error);
       }
-    );*/
-    this.unavailableDates = [{ 
-      date: new Date('2025-04-10'),
-      startTime: new Date('2025-04-10T10:00:00'),
-      endTime: new Date('2025-04-10T12:00:00')
-    }, {
-      date: new Date('2025-04-11'),
-      startTime: new Date('2025-04-11T14:00:00'),
-      endTime: new Date('2025-04-11T16:00:00')
-    }];
+    );
+    this.unavailableDates = [
+      new Date('2025-04-10'), new Date('2025-04-11')
+    ];
   }
 
   generateAvailableTimes(startTime: string, endTime: string, duration: number): string[] {
-    let times: string[] = [];
     let currentTime = new Date(`2025-01-01T${startTime}:00`);
     const endTimeDate = new Date(`2025-01-01T${endTime}:00`);
     // Générer des créneaux horaires disponibles
-    while (currentTime < endTimeDate) {
-      times.push(currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-      currentTime.setMinutes(currentTime.getMinutes() + duration);  // Ajouter la durée
-    }
+    
+    let times: any[] = [];
+    times =[{
+      startTime: {label: startTime, value: startTime},
+      endTime: {label: endTime, value: endTime}
+    }]
     return times;
   }
 
   loadMecanos() {
     this.loadService(this.appointmentForm.value.service);
-    /*this.serviceService.getMecaniciensDisponibles(
+    this.serviceService.getMecaniciensDisponibles(
       this.appointmentForm.value.service, 
-      this.appointmentForm.value.appointmentDate,
       this.appointmentForm.value.appointmentDate).subscribe((data) => {
       this.mecanos = data.map((mecano: any) => ({ label: mecano.name, value: mecano.id }));
-    });*/
-    this.mecanos = [
-      { label: 'Mécanicien 1', value: 1 },
-      { label: 'Mécanicien 2', value: 2 }
-    ];
+    });
+  }
+
+  onTimeSlotChange() {
+    const selectedTimeSlot = this.appointmentForm.value.appointmentTime;
+    const startTime = selectedTimeSlot.startTime;
+    const endTime = selectedTimeSlot.endTime;
+    
+    this.appointmentForm.patchValue({
+      appointmentTime: { startTime, endTime }
+    });
+  }
+
+  loadAvailableTimes() {
+    const selectedDate = this.appointmentForm.value.appointmentDate;
+    const selectedService = this.appointmentForm.value.service;
+    
+    const defaultCreneau = { debut : this.workStartTime, fin : this.workEndTime };
+
+    this.serviceService.getCreneaux(selectedService, selectedDate).subscribe((data) => {
+      this.availableTimes = data.map((creneau: any) => ({
+        startTime: creneau.debut,
+        endTime: creneau.fin
+      }));
+    });
   }
 
   submitForm() {
@@ -169,16 +203,5 @@ export class RendezvousFormComponent implements OnInit {;
     }
   }
 
-  onDateSelect(event: any) {
-    this.loadMecanos();
-    
-  }
-
-  OnTimeSelect(event: any) {
-    const selectedTime = event.value;
-    const selectedDate = this.appointmentForm.value.appointmentDate;
-    const startTime = new Date(`${selectedDate}T${selectedTime}`);
-    const endTime = new Date(startTime.getTime() + this.selectedService.duration * 60000); // Ajouter la durée
-    this.availableTimes = this.generateAvailableTimes(startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), this.selectedService.duration);
-  }
+  
 }

@@ -12,7 +12,7 @@ export class RendezvousService {
   constructor(private http: HttpClient) {}
 
   createRendezVous(appointmentData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/rendezvous`, appointmentData);
+    return this.http.post(`${this.apiUrl}`, appointmentData);
   }
 
 }

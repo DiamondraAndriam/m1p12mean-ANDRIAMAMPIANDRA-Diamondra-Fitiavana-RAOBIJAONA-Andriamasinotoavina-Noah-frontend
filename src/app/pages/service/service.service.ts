@@ -19,17 +19,11 @@ export class ServiceService {
     return this.http.get<any>(`${this.apiUrl}/services/${serviceId}`);
   }
 
-  getServiceUnavailability(serviceId: string, month: number, year: number): Observable<any> {
-      return this.http.get(`${this.apiUrl}/services/indisponible/${serviceId}`, {
-        params: { month: month.toString(), year: year.toString() }
-      });
-    }
-
-  getMecaniciensDisponibles(serviceId: string, start: Date, end: Date): Observable<any[]> {
+  getMecaniciensDisponibles(serviceId: string, start: Date): Observable<any[]> {
     return this.http.post<any[]>(`${this.apiUrl}/mecaniciens/disponible`, {
-      serviceId,
-      start,
-      end
+      serviceId: serviceId,
+      date : start.getDate(),
+      heureDebut : start.getHours()
     });
   }
 
@@ -37,4 +31,19 @@ export class ServiceService {
     return this.http.get<any[]>(`${this.apiUrl}/worksHours`);
   }
 
+  getUnavailableDates(serviceId: string, month: number, year: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/indisponibilites/`, {
+      params: { 
+        month: month.toString(),
+        serviceId: serviceId,
+        year: year.toString()
+      }
+    });
+  }
+
+  getCreneaux(serviceId: string, date: Date): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/creneaux/${serviceId}`, {
+      params: { date: date.toISOString() }
+    });
+  }
 }
