@@ -10,11 +10,16 @@ import { AuthService } from '../service/auth.service';
 import { AppFloatingConfigurator } from '../../layout/component/app.floatingconfigurator';
 import { CommonModule } from '@angular/common';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
     selector: 'app-login',
     standalone: true,
-    imports: [ButtonModule, CheckboxModule, InputTextModule, PasswordModule, FormsModule, RouterModule, RippleModule, AppFloatingConfigurator, CommonModule, ProgressSpinnerModule ],
+    imports: [
+        ButtonModule, CheckboxModule, InputTextModule, PasswordModule,
+        FormsModule, RouterModule, RippleModule, AppFloatingConfigurator,
+        CommonModule, ProgressSpinnerModule, DropdownModule
+    ],
     template: `
         <app-floating-configurator />
         <div class="bg-surface-50 dark:bg-surface-950 flex items-center justify-center min-h-screen min-w-[100vw] py-10 overflow-hidden">
@@ -48,12 +53,23 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
                             <label for="phone" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Téléphone</label>
                             <input pInputText id="phone" placeholder="numéro mobile" class="w-full md:w-[30rem] mb-8" [(ngModel)]="user.phone" name="phone" required />
 
+                            <label for="typeMecanicien" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Type de mécanicien</label>
+                            <p-dropdown
+                                id="typeMecanicien"
+                                [options]="typeOptions"
+                                optionLabel="label"
+                                optionValue="value"
+                                class="w-full md:w-[30rem] mb-8"
+                                [(ngModel)]="user.typeMecanicien"
+                                name="typeMecanicien"
+                            ></p-dropdown>
+
                             <label for="address" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Adresse</label>
                             <input pInputText id="address" placeholder="addresse" class="w-full md:w-[30rem] mb-8" [(ngModel)]="user.address" name="address" />
 
                             <div>
                                 <p-button
-                                    label="Se connecter"
+                                    label="Inscrire"
                                     styleClass="w-full"
                                     [disabled]="isLoading"
                                     (click)="onRegister()"
@@ -105,10 +121,18 @@ export class RegisterMechanicComponent {
       password: '',
       phone: '',
       address: '',
-      role: 'mecanicien'
+      role: 'mecanicien',
+      typeMecanicien:'mecanicien'
     };
     errorMessage: string = '';
     isLoading: boolean = false;
+    typeOptions = [
+        { label: 'Mecanicien', value: 'mecanicien' },
+        { label: 'Électricien', value: 'électricien' },
+        { label: 'Depanneur', value: 'depanneur' },
+        { label: 'Nettoyeur', value: 'nettoyeur' },
+        { label: 'Diagnosticien', value: 'diagnosticien' },
+    ];
   
     constructor(private authService: AuthService, private router: Router) { }
   
