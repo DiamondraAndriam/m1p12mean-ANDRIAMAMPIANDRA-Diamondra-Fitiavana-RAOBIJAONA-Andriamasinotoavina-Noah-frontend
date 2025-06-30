@@ -111,7 +111,7 @@ export class Login {
             next: (response) => {
                 this.isLoading = false; 
                 this.authService.setToken(response.token);
-                this.router.navigateByUrl('/').then(() => {
+                this.router.navigateByUrl('/client/list-reparation').then(() => {
                     window.location.reload(); 
                 });
             },

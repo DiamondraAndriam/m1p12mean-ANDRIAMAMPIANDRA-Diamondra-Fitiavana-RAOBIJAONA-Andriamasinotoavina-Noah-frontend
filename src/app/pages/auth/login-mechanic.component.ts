@@ -107,7 +107,7 @@ export class LoginMechanic {
             next: (response) => {
                 this.isLoading = false; 
                 this.authService.setToken(response.token);
-                this.router.navigateByUrl('/').then(() => {
+                this.router.navigateByUrl('/mecanicien/list-reparation').then(() => {
                     window.location.reload(); 
                 });
             },

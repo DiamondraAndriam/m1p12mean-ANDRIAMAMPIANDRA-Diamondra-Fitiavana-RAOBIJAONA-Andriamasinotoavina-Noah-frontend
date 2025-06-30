@@ -112,7 +112,7 @@ export class LoginManager {
             next: (response) => {
                 this.isLoading = false; 
                 this.authService.setToken(response.token);
-                this.router.navigateByUrl('/').then(() => {
+                this.router.navigateByUrl('/manager/user-management').then(() => {
                     window.location.reload(); 
                 });
             },
